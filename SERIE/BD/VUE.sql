@@ -1,20 +1,9 @@
-CREATE VIEW annexe1Vue AS
+CREATE OR REPLACE VIEW annexe1Vue AS
 SELECT
-    s.titre_fr,
-    s.titre_vo,
-    s.annee_creation,
-    g.libelle AS genre,
-    p.nom_pays AS pays_origine,
-    s.duree_moy_ep,
-    s.musique_titre,
-    s.musique_groupe,
-    per.nom AS createur_nom,
-    per.prenom AS createur_prenom
-FROM serie s
-JOIN genre g ON s.id_genre = g.id_genre
-JOIN pays p ON s.id_pays = p.id_pays
-JOIN createur c ON s.id_createur = c.id_createur
-JOIN personne per ON c.id_createur = per.id_personne;
+    s.id_serie,
+    s.image,
+    s.titre_fr
+FROM serie s;
 
 CREATE VIEW annexe2Vue AS
 SELECT
@@ -76,8 +65,8 @@ JOIN personne per_sc ON sc.id_scenariste = per_sc.id_personne
 JOIN realiser r ON e.id_serie = r.id_serie
     AND e.num_saison = r.num_saison
     AND e.num_episode = r.num_episode
-JOIN réalisateur re ON r.id_réalisateur = re.id_réalisateur
-JOIN personne per_re ON re.id_réalisateur = per_re.id_personne
+JOIN realisateur re ON r.id_realisateur = re.id_realisateur
+JOIN personne per_re ON re.id_realisateur = per_re.id_personne
 JOIN interpreter i ON e.id_serie = i.id_serie
     AND e.num_saison = i.num_saison
     AND e.num_episode = i.num_episode
@@ -88,6 +77,7 @@ JOIN personnage pg ON i.id_personnage = pg.id_personnage;
 
 CREATE VIEW annexe5Vue AS
 SELECT
+    s.titre_fr AS titre_serie,
     pg.nom_personnage,
     pp.nom_position AS position,
     pg.description,
@@ -101,6 +91,7 @@ FROM personnage pg
 JOIN avoir av ON pg.id_personnage = av.id_personnage
 JOIN position_personnage pp ON av.id_position = pp.id_position
 JOIN interpreter i ON pg.id_personnage = i.id_personnage
+JOIN serie s ON i.id_serie = s.id_serie
 JOIN episode e ON i.id_serie = e.id_serie
     AND i.num_saison = e.num_saison
     AND i.num_episode = e.num_episode

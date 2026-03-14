@@ -1,3 +1,27 @@
+DROP TABLE IF EXISTS genre CASCADE;
+DROP TABLE IF EXISTS pays CASCADE;
+DROP TABLE IF EXISTS personne CASCADE;
+DROP TABLE IF EXISTS personnage CASCADE;
+DROP TABLE IF EXISTS chaine_tv CASCADE;
+DROP TABLE IF EXISTS utilisateur CASCADE;
+DROP TABLE IF EXISTS moy_paiement CASCADE;
+DROP TABLE IF EXISTS acteur CASCADE;
+DROP TABLE IF EXISTS doubleur CASCADE;
+DROP TABLE IF EXISTS realisateur CASCADE;
+DROP TABLE IF EXISTS scenariste CASCADE;
+DROP TABLE IF EXISTS createur CASCADE;
+DROP TABLE IF EXISTS producteur CASCADE;
+DROP TABLE IF EXISTS position_personnage CASCADE;
+DROP TABLE IF EXISTS serie CASCADE;
+DROP TABLE IF EXISTS saison CASCADE;
+DROP TABLE IF EXISTS episode CASCADE;
+DROP TABLE IF EXISTS interpreter CASCADE;
+DROP TABLE IF EXISTS ecrire CASCADE;
+DROP TABLE IF EXISTS produire CASCADE;
+DROP TABLE IF EXISTS diffuser CASCADE;
+DROP TABLE IF EXISTS realiser CASCADE;
+DROP TABLE IF EXISTS avoir CASCADE;
+
 CREATE TABLE genre(
    id_genre INT,
    libelle VARCHAR(50),
@@ -33,25 +57,25 @@ CREATE TABLE chaine_tv(
 );
 
 CREATE TABLE utilisateur(
-   id_utilisateur INT,
+   id_utilisateur SERIAL,
    email VARCHAR(100) NOT NULL,
-   mdp CHAR(64) NOT NULL,
+   mdp VARCHAR(64) NOT NULL,
    nom VARCHAR(255) NOT NULL,
    prenom VARCHAR(255) NOT NULL,
    adresse VARCHAR(512) NOT NULL,
-   cp VARCHAR(50) NOT NULL,
+   cp VARCHAR(255) NOT NULL,
    ville VARCHAR(255) NOT NULL,
    tel VARCHAR(100) NOT NULL,
    PRIMARY KEY(id_utilisateur),
    UNIQUE(email),
-   CHECK (CHAR_LENGTH(mdp) = 64)
+   CHECK (CHAR_LENGTH(mdp) BETWEEN 4 AND 64)
 );
 
 CREATE TABLE moy_paiement(
    id_utilisateur  INT,
    num_carte VARCHAR(255) NOT NULL,
-   date_expiration VARCHAR(50) NOT NULL,
-   cvv VARCHAR(50) NOT NULL,
+   date_expiration VARCHAR(255) NOT NULL,
+   cvv VARCHAR(255) NOT NULL,
    PRIMARY KEY(id_utilisateur, num_carte),
    FOREIGN KEY(id_utilisateur) REFERENCES utilisateur(id_utilisateur)
 );
@@ -69,9 +93,9 @@ CREATE TABLE doubleur(
 );
 
 CREATE TABLE realisateur(
-   id_réalisateur INT,
-   PRIMARY KEY(id_réalisateur),
-   FOREIGN KEY(id_réalisateur) REFERENCES personne(id_personne)
+   id_realisateur INT,
+   PRIMARY KEY(id_realisateur),
+   FOREIGN KEY(id_realisateur) REFERENCES personne(id_personne)
 );
 
 CREATE TABLE scenariste(
@@ -102,6 +126,7 @@ CREATE TABLE serie(
    id_serie INT,
    titre_fr VARCHAR(50),
    titre_vo VARCHAR(50),
+   image VARCHAR(255),
    annee_creation DATE,
    duree_moy_ep INT,
    musique_titre VARCHAR(50),
@@ -113,7 +138,7 @@ CREATE TABLE serie(
    FOREIGN KEY(id_genre) REFERENCES genre(id_genre),
    FOREIGN KEY(id_createur) REFERENCES createur(id_createur),
    FOREIGN KEY(id_pays) REFERENCES pays(id_pays),
-   CHECK (YEAR(annee_creation) > 0 AND YEAR(annee_creation) < YEAR(CURDATE()))
+   CHECK (EXTRACT(YEAR FROM annee_creation) > 0 AND EXTRACT(YEAR FROM annee_creation) < EXTRACT(YEAR FROM CURRENT_DATE))
 );
 
 CREATE TABLE saison(
@@ -138,6 +163,7 @@ CREATE TABLE episode(
    date_diff_origine DATE,
    date_diff_fr DATE,
    resume VARCHAR(1000),
+   image VARCHAR(255),
    PRIMARY KEY(id_serie, num_saison, num_episode),
    FOREIGN KEY(id_serie, num_saison) REFERENCES saison(id_serie, num_saison),
    CHECK (num_episode > 0)
@@ -150,7 +176,7 @@ CREATE TABLE interpreter(
    num_episode INT,
    id_acteur INT,
    id_doubleur INT,
-   est_guest_star LOGICAL,
+   est_guest_star BOOLEAN,
    PRIMARY KEY(id_personnage, id_serie, num_saison, num_episode, id_acteur, id_doubleur),
    FOREIGN KEY(id_personnage) REFERENCES personnage(id_personnage),
    FOREIGN KEY(id_serie, num_saison, num_episode) REFERENCES episode(id_serie, num_saison, num_episode),
@@ -188,10 +214,10 @@ CREATE TABLE realiser(
    id_serie INT,
    num_saison INT,
    num_episode INT,
-   id_réalisateur INT,
-   PRIMARY KEY(id_serie, num_saison, num_episode, id_réalisateur),
+   id_realisateur INT,
+   PRIMARY KEY(id_serie, num_saison, num_episode, id_realisateur),
    FOREIGN KEY(id_serie, num_saison, num_episode) REFERENCES episode(id_serie, num_saison, num_episode),
-   FOREIGN KEY(id_réalisateur) REFERENCES réalisateur(id_réalisateur)
+   FOREIGN KEY(id_realisateur) REFERENCES realisateur(id_realisateur)
 );
 
 CREATE TABLE avoir(
