@@ -2,8 +2,8 @@
 // Paramètres de connexion à la base de données PostgreSQL
 define("HOST",   "127.0.0.1");
 define("DBNAME", "BDSERIE");
-define("USER",   "postgres");
-define("PASS",   "Bizemaboude@1");
+define("USER",   "");
+define("PASS",   "");
 
 // Ouvre et retourne une connexion PDO à la base de données
 function getConnexion() {
